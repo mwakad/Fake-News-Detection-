@@ -1,6 +1,6 @@
 # data and images folder
-data/
-images/
+#datasets/
+#images/
 
 __pycache__/
 *.py[codz]
