@@ -1,2 +1,2 @@
-# Fake-News-Detection-
-Using machine learning to detect fake news in web-hosted articles. Leveraging logistic regression, gradient boosting decision trees, neural networks and NLP hugging face transformers
+# Fake News Detection
+Using machine learning to detect fake news in web-hosted articles. Leveraging logistic regression (Baseline), XGBoost (Ensemble model), LTSM (neural network) and NLP hugging face transformers (RoBERTa, BERT, Longformer)
