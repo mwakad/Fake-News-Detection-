@@ -1,15 +1,27 @@
 # Dockerfile
-FROM python:3.10-slim
+FROM python:3.9-slim
 
+# Set working directory
 WORKDIR /app
 
-# Install system dependencies
+# Install required system dependencies
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     build-essential \
+    gcc \
+    git \
+    libffi-dev \
+    libxml2 \
+    libxml2-dev \
+    libxslt1-dev \
+    libjpeg-dev \
+    zlib1g-dev \
+    libpng-dev \
+    libcairo2 \
+    libpango-1.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements
+# Copy and install Python dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
@@ -18,10 +30,13 @@ RUN python -m spacy download en_core_web_sm
 
 # Copy model and app files
 COPY roberta_model/ ./roberta_model/
-COPY app.py scraper.py streamlit_app.py ./
+COPY main.py app.py scraper.py ./
 
 # Expose FastAPI port
 EXPOSE 8000
 
-# Default command: run FastAPI
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
+# Default command to run FastAPI server
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+
+
+

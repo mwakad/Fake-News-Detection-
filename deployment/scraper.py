@@ -4,19 +4,46 @@ from bs4 import BeautifulSoup
 import spacy
 import re
 
-# Load spaCy model
+# Load spaCy 
 try:
-    nlp = spacy.load("en_core_web_sm")
+    nlp = spacy.load("en_core_web_sm", disable=["parser", "ner"])
 except OSError:
-    print("Please install spaCy English model: python -m spacy download en_core_web_sm")
+    print("Install spaCy English model: python -m spacy download en_core_web_sm")
     raise
 
 def clean_text(text):
     if not text:
         return ""
+    
     # Remove extra whitespace and newlines
     text = re.sub(r'\s+', ' ', text)
     return text.strip()
+
+def preprocess_text(text):
+    if isinstance(text, list):
+        text = " ".join(text)
+    if not isinstance(text, str):
+        text = str(text)
+
+    # Lowercase
+    text = text.lower()
+
+    # Remove URLs, brackets, angle brackets, newlines
+    text = re.sub(r'https?://\S+|www\.\S+', '', text)
+    text = re.sub(r'\[.*?\]', '', text)
+    text = re.sub(r'<.*?>+', '', text)
+    text = re.sub(r'\n', ' ', text)
+
+    cleaned_tokens = []
+    doc = nlp(text)
+
+    for token in doc:
+        if not token.is_stop and not token.is_punct:
+            lemma = re.sub(r'[^a-zA-Z]', '', token.lemma_)
+            if lemma:
+                cleaned_tokens.append(lemma)
+
+    return " ".join(cleaned_tokens)
 
 def extract_article(url):
     headers = {
@@ -43,14 +70,9 @@ def extract_article(url):
             # Fallback: use body
             text = soup.body.get_text(separator=' ', strip=True) if soup.body else ""
 
-        # Clean text
         cleaned_text = clean_text(text)
         cleaned_title = clean_text(title)
-
-        # Use spaCy for sentence filtering (optional preprocessing like in notebook)
-        doc = nlp(cleaned_text)
-        sentences = [sent.text for sent in doc.sents if len(sent.text.strip()) > 10]
-        spacy_text = " ".join(sentences)
+        spacy_text = preprocess_text(cleaned_text)
 
         return {
             "title": cleaned_title,
@@ -62,3 +84,4 @@ def extract_article(url):
         return {
             "error": f"Error scraping article: {str(e)}"
         }
+

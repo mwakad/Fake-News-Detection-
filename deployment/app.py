@@ -1,106 +1,83 @@
-# app.py
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
-from typing import Dict
-import torch
-from transformers import RobertaTokenizer, RobertaForSequenceClassification
-import shap
-import numpy as np
+# streamlit_app.py
+import streamlit as st
+import requests
 import json
+import matplotlib.pyplot as plt
 
-from scraper import extract_article
+st.set_page_config(page_title=" Transformers in Fake News Detector", layout="centered")
 
-# Initialize FastAPI app
-app = FastAPI(title="Fake News Detection API", description="Detects misinformation in news articles using RoBERTa")
+st.title(" Fake News Detection ")
+st.markdown(
+    """
+    This application leverages a fine-tuned **RoBERTa-base** 
+    transformer to predict the credibility of a news article.
+    
+    - **Prediction :** Predicted class.
+    
+        - `class 0` (**Fake**) : An article is likelier to contain **_misinformation_**. 
+    
+        - `class 1` (**Real**) : An article is likelier to be **_credible_**.
+    
+    - **Confidence Scores :** Substantiates final prediction threshold.   
+    
+    - **LIME Explanation :** Highlights top-10 predictor features.
+    
+    """
+)
+st.markdown("<br>", unsafe_allow_html=True)
 
-# Load model and tokenizer
-MODEL_PATH = "./roberta_model"
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# Input form
+url = st.text_input(" News Article URL", placeholder="https://example.com/news-article")
 
-tokenizer = RobertaTokenizer.from_pretrained(MODEL_PATH)
-model = RobertaForSequenceClassification.from_pretrained(MODEL_PATH).to(device)
-model.eval()
+if st.button(" Analyze Article"):
+    if not url:
+        st.warning(" Please enter a valid URL.")
+    else:
+        with st.spinner(" Scraping article and analyzing..."):
+            try:
+                # Call FastAPI backend
+                response = requests.post("http://127.0.0.1:8000/predict", json={"url": url})
+                if response.status_code == 200:
+                    result = response.json()
 
-# Input schema
-class ArticleRequest(BaseModel):
-    url: str
+                    st.success(f"**Article Title :**   *{result['title']}*")
+                    st.markdown(f"**Prediction :** `{result['prediction']}`")
+                    st.markdown(f"**Confidence :** `{result['confidence']:.2%}`")
 
-# SHAP explainer
-def explain_prediction(text):
-    # Tokenize input
-    inputs = tokenizer(text, return_tensors="pt", truncation=True, padding=True, max_length=256)
-    input_ids = inputs["input_ids"].to(device)
-    attention_mask = inputs["attention_mask"].to(device)
+                    # Show probabilities with progress bar
+                    st.progress(result["probabilities"]["real"])
+                    st.caption(f"🟥 Fake: {result['probabilities']['fake']:.2%} | 🟩 Real: {result['probabilities']['real']:.2%}")
+                    st.markdown("<br>", unsafe_allow_html=True)
 
-    # Move model to GPU if available
-    model.to(device)
+                    # Display LIME explanation 
+                    explanation = result.get("explanation", [])
+                    if isinstance(explanation, list) and explanation:
+                        st.markdown("### LIME Explanation")
 
-    # SHAP explainer
-    explainer = shap.Explainer(
-        lambda x: torch.softmax(model(torch.tensor(x).to(device), attention_mask=torch.tensor(
-            np.tile(attention_mask.cpu().numpy(), (len(x), 1))
-        ).to(device)).logits.cpu().detach().numpy(), axis=1),
-        tokenizer
-    )
-    shap_values = explainer([text])
-    return shap_values
+                        # Unzip words and weights
+                        words, weights = zip(*explanation)
 
-@app.post("/predict", response_model=Dict)
-async def predict(request: ArticleRequest):
-    url = request.url.strip()
+                        # Color positive weights green and negative weights red
+                        colors = ["green" if w > 0 else "red" for w in weights]
 
-    # Scrape article
-    article = extract_article(url)
-    if "error" in article:
-        raise HTTPException(status_code=400, detail=article["error"])
+                        # Create horizontal bar plot
+                        fig, ax = plt.subplots(figsize=(8, 5))
+                        y_pos = range(len(words))
+                        ax.barh(y_pos, weights, color=colors)
+                        ax.set_yticks(y_pos)
+                        ax.set_yticklabels(words)
+                        ax.invert_yaxis() 
+                        ax.set_xlabel("Weight")
+                        ax.set_title("LIME Explanation (Top-10 Features)")
 
-    title = article["title"]
-    body = article["body"]
-    processed_text = article["spacy_text"]
+                        st.pyplot(fig)
 
-    if not processed_text:
-        raise HTTPException(status_code=400, detail="No readable content extracted from the article.")
+                    elif isinstance(explanation, str):
+                        st.warning(explanation)
+                    else:
+                        st.info(" No explanation available.")    
 
-    # Predict
-    inputs = tokenizer(
-        processed_text,
-        return_tensors="pt",
-        truncation=True,
-        padding=True,
-        max_length=256
-    ).to(device)
-
-    with torch.no_grad():
-        outputs = model(**inputs)
-        probs = torch.softmax(outputs.logits, dim=-1).cpu().numpy()[0]
-        pred_label = int(np.argmax(probs))
-        confidence = float(probs[pred_label])
-
-    # Interpretation via SHAP (only for explanation; may be slow)
-    try:
-        shap_explainer = shap.Explainer(
-            lambda x: torch.softmax(model(torch.tensor(x).to(device), attention_mask=torch.ones_like(torch.tensor(x))).logits.cpu().detach().numpy(), axis=1),
-            tokenizer
-        )
-        shap_values = shap_explainer([processed_text])
-        shap_exp = shap_values[0].values.tolist()  # Simplified for JSON
-    except Exception as e:
-        shap_exp = f"Explanation failed: {str(e)}"
-
-    result = {
-        "url": url,
-        "title": title,
-        "prediction": "Real (Credible)" if pred_label == 1 else "Fake (Misinformation)",
-        "confidence": confidence,
-        "probabilities": {
-            "fake": float(probs[0]),
-            "real": float(probs[1])
-        },
-        "explanation": shap_exp  # Note: Full SHAP visualization not returned here
-    }
-
-    return result
-
-@app.get("/")
-async def root():
-    return {"message": "Fake News Detection API is running. Use POST /predict with JSON {'url': '...'}"}
+            except requests.ConnectionError:
+                st.error(" Could not connect to the FastAPI server. Make sure it's running on `http://127.0.0.1:8000`.")
+            except Exception as e:
+                st.error(f" Unexpected error: {e}")
