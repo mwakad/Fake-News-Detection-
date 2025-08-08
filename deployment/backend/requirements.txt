@@ -1,0 +1,13 @@
+# requirements (Backend) 
+
+fastapi
+uvicorn
+transformers
+torch
+numpy
+lime
+pydantic
+requests
+beautifulsoup4
+spacy
+lxml

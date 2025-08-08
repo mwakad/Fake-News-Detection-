@@ -1,0 +1,24 @@
+# docker-compose.yml
+
+version: '3.8'
+services:
+  fastapi:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+
+  streamlit:
+    build: ./frontend
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./frontend:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+      - API_URL=http://fastapi:8000
+    depends_on:
+      - fastapi
