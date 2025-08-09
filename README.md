@@ -14,12 +14,12 @@ Metric: Macro-averaged F1-score
 5.	Deploy using Docker, FastAPI, and Streamlit.
 
  Models Built
-Model	Accuracy	Precision	Recall	F1 Score	ROC-AUC
-Logistic Regression	82.27%	83.17%	96.18%	89.20%	81.85%
-XGBoost	82.60%	84.36%	94.70%	89.23%	82.19%
-LSTM	82.14%	85.84%	91.66%	88.65%	80.56%
-RoBERTa (Best)	84.70%	86.91%	94.06%	90.35%	85.58%
-________________________________________
+Model	                     Accuracy      	Precision	             Recall	       F1 Score	              ROC-AUC
+Logistic Regression	       82.27%	         83.17%                	96.18%	       89.20%	               81.85%
+XGBoost	                   82.60%	         84.36%	                94.70%	       89.23%               	82.19%
+LSTM                      	82.14%	         85.84%                	91.66%	       88.65%	               80.56%
+RoBERTa (Best)            	84.70%         	86.91%                	94.06%	       90.35%	               85.58%
+
 Project Structure
 graphql
 CopyEdit
