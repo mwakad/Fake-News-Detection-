@@ -86,17 +86,17 @@ async def predict(request: ArticleRequest):
         confidence = max(fake_prob, real_prob)
 
         # Flagged case for human review
-        if 0.25 <= fake_prob <= 0.30 and 0.70 <= real_prob <= 0.75:
+        if 0.40 <= fake_prob <= 0.45 and 0.55 <= real_prob <= 0.60:
             prediction_str = "Flagged for Human Review"
        
         # Prediction threshold for Fake Article (Label 0)
-        elif fake_prob > 0.30: # Set to 30% because model is biased towards predicting label 1
+        elif fake_prob > 0.45: 
             pred_label = 0
             prediction_str = class_names[pred_label]
             confidence = fake_prob
         
         # Prediction threshold for Real Article (Label 1)
-        elif real_prob > 0.75: # Set to 75% due to model's bias to make Real Article predictions
+        elif real_prob > 0.60: 
             pred_label = 1
             prediction_str = class_names[pred_label]
             confidence = real_prob
