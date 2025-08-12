@@ -15,9 +15,9 @@ Built with **scikit-learn**, **XGBoost**, **TensorFlow/Keras**, **Torch**, **Hug
 The dataset consists of **15,116 news articles** with labels indicating whether each article is *fake* (`Class 0`) or *real* (`Class 1`).  
 
 Preprocessing steps included:
-- Tokenization and lemmatization using spaCy
-- Stopword removal and punctuation stripping
-- Domain extraction for EDA
+- Tokenization and lemmatization using spaCy.
+- Stopword removal and punctuation stripping.
+- Domain extraction.
 
 The dataset is **imbalanced**, with a higher proportion of real articles compared to fake ones. This informed the choice of macro-averaged recall as the primary evaluation metric.
 <img width="2370" height="1765" alt="class-distribuctions" src="https://github.com/user-attachments/assets/4c0d0fef-a71e-4fba-9a0d-ef8731eee539" />
@@ -29,6 +29,7 @@ Manual fact-checking is slow and infeasible at scale. The goal is to build an **
 
 ## Project Objectives
 ### **Objective 1:** Perform Extraploratory Data Analysis
+<img width="3590" height="1169" alt="top-5-domains-for-fake-and-real-news" src="https://github.com/user-attachments/assets/80ecdace-432b-4130-8837-f9b4e8fcf64b" />
 <img width="4468" height="2365" alt="top-10-bigrams" src="https://github.com/user-attachments/assets/ae007b2f-0a1b-48af-9e14-ad2c229443d2" />
 <img width="4468" height="2365" alt="top-10-trigrams" src="https://github.com/user-attachments/assets/53622ac7-236e-46ac-b6fb-f5623bd501a2" />
 
@@ -41,11 +42,11 @@ A baseline Logistic Regression model was built with imbalanced data and two bala
 
 ### **Objective 3:** Build an **XGBoost** model, **LSTM** neural network, and Finetune the **RoBERTa-base Transformer**
 - An XGBoost classifier:  
- - **Best configuration:** RUS-balanced data with **macro-averaged recall = 0.7427**.
+  - **Best configuration:** RUS-balanced data with **macro-averaged recall = 0.7427**.
 - An LSTM neural network:
   - **Best configuration:** SMOTE-balanced data with **macro-averaged recall = 0.7104**.
 - Finetune the RoBERTa-base transformer:  
- - **Best configuration:** SMOTE-balanced data with **macro-averaged recall = 0.7660**
+  - **Best configuration:** SMOTE-balanced data with **macro-averaged recall = 0.7660**
 
 ### **Objective 4:** Interpret best performing ML model using the LIME library
 Best Performing Model
