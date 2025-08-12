@@ -3,7 +3,7 @@
 # Imports
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from typing import Dict, List, Tuple 
+from typing import Dict, List, Tuple, Union
 import torch
 from transformers import RobertaTokenizer, RobertaForSequenceClassification
 import numpy as np
@@ -32,21 +32,17 @@ class ArticleRequest(BaseModel):
 
 # Define LIME-compatible predictor function
 def lime_predictor(texts: List[str]) -> np.ndarray:
-    
     # Tokenize batch of texts
     encodings = tokenizer(texts, truncation=True, padding=True, return_tensors="pt").to(device)
     
     with torch.no_grad(): # Disable gradient calculation for inference
         outputs = model(**encodings)
-        
-        # Apply softmax to get probabilities and convert to numpy array
         probs = torch.nn.functional.softmax(outputs.logits, dim=1).cpu().numpy()
     
     return probs
 
 # Initialize LIME explainer
 class_names = ['Fake Article (Label 0)', 'Real Article (Label 1)']
-# class_names = ['Fake (Misinformation)', 'Real (Credible)'] 
 lime_explainer = LimeTextExplainer(class_names=class_names)
 
 @app.post("/predict", response_model=Dict)
@@ -85,57 +81,19 @@ async def predict(request: ArticleRequest):
         prediction_str = ""
         confidence = max(fake_prob, real_prob)
 
-        # Flagged case for human review
         if 0.40 <= fake_prob <= 0.45 and 0.55 <= real_prob <= 0.60:
             prediction_str = "Flagged for Human Review"
-       
-        # Prediction threshold for Fake Article (Label 0)
         elif fake_prob > 0.45: 
             pred_label = 0
             prediction_str = class_names[pred_label]
             confidence = fake_prob
-        
-        # Prediction threshold for Real Article (Label 1)
         elif real_prob > 0.60: 
             pred_label = 1
             prediction_str = class_names[pred_label]
             confidence = real_prob
-            
-        # Error exception 
         else:
             prediction_str = "Uncertain Prediction (Thresholds Not Met)"
 
-
-        # Generate LIME explanation
-        top_features: List[Tuple[str, float]] = []   
-        if pred_label in [0, 1]: # generate explanation if not flagged for human review
-            try:
-                explanation = lime_explainer.explain_instance(
-                    processed_text,
-                    classifier_fn=lime_predictor,
-                    num_features=10,
-                    num_samples=500,
-                    labels=[pred_label]
-                )
-                raw_features = explanation.as_list(label=pred_label)
-                for feature_item in raw_features:
-                    if isinstance(feature_item, (list, tuple)) and len(feature_item) == 2:
-                        try:
-                            word = str(feature_item[0])
-                            weight = float(feature_item[1])
-                            top_features.append((word, weight))
-                        except (ValueError, TypeError):
-                            print(f"Skipping malformed LIME feature item during type conversion: {feature_item}")
-                    else:
-                        print(f"Skipping malformed LIME feature item (not a 2-tuple): {feature_item}")
-                if not top_features:
-                    top_features = [("No specific features found for this prediction.", 0.0)]
-            except Exception as e:
-                print(f"LIME explanation failed for URL {url}: {e}")
-                top_features = [(f"LIME explanation failed: {str(e)}", 0.0)]
-        else:
-            top_features = [("No prediction passed the thresholds for explanation.", 0.0)]
-         
     # Prepare result dictionary 
     result = {
         "url": url,
@@ -146,10 +104,50 @@ async def predict(request: ArticleRequest):
             "fake": fake_prob,
             "real": real_prob
         },
-        "explanation": top_features 
+        "processed_text": processed_text,
+        "pred_label": pred_label
     }
 
     return result
+
+class ExplainRequest(BaseModel):
+    processed_text: str
+    pred_label: Union[int, None]
+
+@app.post("/explain", response_model=Dict)
+async def explain(request: ExplainRequest):
+    processed_text = request.processed_text
+    pred_label = request.pred_label
+    top_features: List[Tuple[str, float]] = []   
+    if pred_label in [0, 1]:
+        try:
+            explanation = lime_explainer.explain_instance(
+                processed_text,
+                classifier_fn=lime_predictor,
+                num_features=10,
+                num_samples=500,
+                labels=[pred_label]
+            )
+            raw_features = explanation.as_list(label=pred_label)
+            for feature_item in raw_features:
+                if isinstance(feature_item, (list, tuple)) and len(feature_item) == 2:
+                    try:
+                        word = str(feature_item[0])
+                        weight = float(feature_item[1])
+                        top_features.append((word, weight))
+                    except (ValueError, TypeError):
+                        print(f"Skipping malformed LIME feature item during type conversion: {feature_item}")
+                else:
+                    print(f"Skipping malformed LIME feature item (not a 2-tuple): {feature_item}")
+            if not top_features:
+                top_features = [("No specific features found for this prediction.", 0.0)]
+        except Exception as e:
+            print(f"LIME explanation failed: {e}")
+            top_features = [(f"LIME explanation failed: {str(e)}", 0.0)]
+    else:
+        top_features = [("No prediction passed the thresholds for explanation.", 0.0)]
+         
+    return {"explanation": top_features}
 
 # Root endpoint 
 @app.get("/")
