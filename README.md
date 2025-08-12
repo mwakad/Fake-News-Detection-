@@ -29,8 +29,14 @@ Manual fact-checking is slow and infeasible at scale. The goal is to build an **
 
 ## Project Objectives
 ### **Objective 1:** Perform Extraploratory Data Analysis
+
+**Top-5 Domains for Fake and Real News Articles**
 <img width="3590" height="1169" alt="top-5-domains-for-fake-and-real-news" src="https://github.com/user-attachments/assets/80ecdace-432b-4130-8837-f9b4e8fcf64b" />
+
+**Top-10 Bigrams for Fake and Real News Articles**
 <img width="4468" height="2365" alt="top-10-bigrams" src="https://github.com/user-attachments/assets/ae007b2f-0a1b-48af-9e14-ad2c229443d2" />
+
+**Top-10 Trigrams for Fake and Real News Articles**
 <img width="4468" height="2365" alt="top-10-trigrams" src="https://github.com/user-attachments/assets/53622ac7-236e-46ac-b6fb-f5623bd501a2" />
 
 
