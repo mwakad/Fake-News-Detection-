@@ -58,10 +58,10 @@ A baseline Logistic Regression model was built with imbalanced data and two bala
 
 | MODEL                            | Macro-Average Recall | Recall (Fake) | Recall (Real) | Precision (Fake) | Precision (Real) | AUC | Accuracy |
 |----------------------------------|------------------|---------------|-------|-------|-------|-------|-------|
-| Logistic Regression-SMOTE        | 0.7145           | 0.7029        | 0.7801 | 0.4812 | 0.9005 | 0.815 | 0.7627 | 
+| LR-SMOTE        | 0.7145           | 0.7029        | 0.7801 | 0.4812 | 0.9005 | 0.815 | 0.7627 | 
 | XGBoost-RUS                      | 0.7427           | 0.7088        | 0.7767 | 0.4794 | 0.9019 | 0.822 | 0.7614 | 
 | LSTM-SMOTE                       | 0.7104           | 0.5784        | 0.8424 | 0.5157 | 0.8732 | 0.792 | 0.7830 | 
-| Finetuned RoBERTa-SMOTE          | **0.7660**       | **0.6686**    | **0.8634**  | **0.5869** | **0.8998** | **0.843** | **0.8196** | 
+| RoBERTa-SMOTE          | **0.7660**       | **0.6686**    | **0.8634**  | **0.5869** | **0.8998** | **0.843** | **0.8196** | 
 
 - The Finetuned RoBERTa model using SMOTE-balanced dataset is the best performing alternative because it achieves the highest scores for Macro-averaged recall (0.7660).
 
