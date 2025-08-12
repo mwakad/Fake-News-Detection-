@@ -2,7 +2,7 @@
 
 ## Project Summary
 This project applies advanced Natural Language Processing (NLP) and machine learning techniques to classify news articles as either **fake** (Class 0) or **real** (Class 1).  
-It incorporates traditional ML (**_Logistic regression_**), ensemble learning (**_XGBoost_**), neural networks (**_LSTM_**), and transformer-based deep learning (**_RoBERTa-bae**) models to identify misinformation, with an emphasis on **macro-averaged recall** to handle imbalanced datasets.
+It incorporates traditional ML (**_Logistic regression_**), ensemble learning (**_XGBoost_**), neural networks (**_LSTM_**), and transformer-based deep learning (**_RoBERTa-base**) models to identify misinformation, with an emphasis on **macro-averaged recall** to handle imbalanced datasets.
 
 Built with **scikit-learn**, **XGBoost**, **TensorFlow/Keras**, **Hugging Face Transformers**, and **Streamlit**, the project includes a complete pipeline from data preprocessing to model deployment using FastAPI and Docker.
 
@@ -79,6 +79,12 @@ Best Performing Model
 ## Model Interpretability
 - **LIME** was used to explain RoBERTa predictions at the feature level.
 - Visualizations highlight the top 10 features supporting the prediction (green = predicted class, red = alternative).
+
+### **Objective 5:** Deploy selected model using FastAPI and Streamlit
+The **Finetuned RoBERTa-base transformer with SMOTE-balanced dataset** is deployed using FastAPI, Streamlit, and Docker.
+  - **Back-end :** The FastAPI app (**_main.py_**) is responsible for model inference. 
+  - **Front-end :** The Streamlit app (**_app.py_**) provides an interactive frontend web interface.
+  - **Docker :** Containerizes the **_Front-end_** and the **_Back-end_**.
 
 ## Conclusion
 The **Finetuned RoBERTa with SMOTE balancing** achieved the highest macro-averaged recall (0.7660) and demonstrated strong capability in detecting fake news articles.  
