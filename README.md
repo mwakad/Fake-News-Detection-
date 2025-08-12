@@ -71,7 +71,7 @@ A baseline Logistic Regression model was built with imbalanced data and two bala
 | Finetuned RoBERTa-SMOTE          | **0.7660**       | **0.6686**    | **0.843** |
 | Finetuned RoBERTa-RUS            | 0.6920           | 0.5167        | 0.828 |
 
-- The Finetuned RoBERTa model using SMOTE-balanced dataset is chosen as the better performing model because it achieves the highest scores for Macro-averaged recall (0.7660).
+- The Finetuned RoBERTa model using SMOTE-balanced dataset is the best performing alternative because it achieves the highest scores for Macro-averaged recall (0.7660).
 
 - This is corroborated by the confusion matrix, which reports the highest true positives for accurate fake news predictions (682).
 <img width="3570" height="1466" alt="roberta-confusion_matrices" src="https://github.com/user-attachments/assets/c547198d-e201-4a96-b88b-676a9a0b1398" />
