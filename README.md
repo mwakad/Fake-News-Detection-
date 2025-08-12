@@ -28,7 +28,7 @@ The rapid spread of fake news online erodes trust, misinforms the public, and ca
 Manual fact-checking is slow and infeasible at scale. The goal is to build an **automated, accurate, and interpretable** detection system to identify fake news in real time.
 
 ## Project Objectives
-### **Objective 1:** Perform Extraploratory Data Analysis
+### **Objective 1:** Perform Extraploratory Data Analysis (EDA)
 
 **Top-5 Domains for Fake and Real News Articles**
 <img width="3590" height="1169" alt="top-5-domains-for-fake-and-real-news" src="https://github.com/user-attachments/assets/80ecdace-432b-4130-8837-f9b4e8fcf64b" />
@@ -40,7 +40,7 @@ Manual fact-checking is slow and infeasible at scale. The goal is to build an **
 <img width="4468" height="2365" alt="top-10-trigrams" src="https://github.com/user-attachments/assets/53622ac7-236e-46ac-b6fb-f5623bd501a2" />
 
 
-### **Objective 2:** Build a Baseline Logistic Regression Model
+### **Objective 2:** Build a baseline Logistic Regression model
 A baseline Logistic Regression model was built with imbalanced data and two balancing strategies:
 - **SMOTE** oversampling for the minority class
 - **Random Undersampling (RUS)** for the majority class
@@ -54,8 +54,7 @@ A baseline Logistic Regression model was built with imbalanced data and two bala
 - Finetune the RoBERTa-base transformer:  
   - **Best configuration:** SMOTE-balanced data with **macro-averaged recall = 0.7660**
 
-### **Objective 4:** Interpret best performing ML model using the LIME library
-Best Performing Model
+### **Objective 4:** Interpret best performing model using the LIME library
 
 | MODEL                            | MACRO-AVG RECALL | RECALL (Fake) | AUC   |
 |----------------------------------|------------------|---------------|-------|
@@ -81,10 +80,9 @@ Best Performing Model
 
 <img width="2970" height="2066" alt="roberta-roc-auc" src="https://github.com/user-attachments/assets/efc7e878-2292-4a74-a56f-79cee8a3ff07" />
 
-
-## Model Interpretability
-- **LIME** was used to explain RoBERTa predictions at the feature level.
-- Visualizations highlight the top 10 features supporting the prediction (green = predicted class, red = alternative).
+  - **LIME** was used to explain the **_finetuned RoBERTa-base Transformer_** model's predictions at the feature level.
+  - Visualizations highlight the top 10 features supporting the prediction (green = `predicted class`, red = `alternative prediction`).
+<img width="2969" height="1765" alt="lime_explanation_barplot" src="https://github.com/user-attachments/assets/663c9b2c-09da-4307-a1fc-3562c9bae87e" />
 
 ### **Objective 5:** Deploy selected model using FastAPI and Streamlit
 The **Finetuned RoBERTa-base transformer with SMOTE-balanced dataset** is deployed using FastAPI, Streamlit, and Docker.
