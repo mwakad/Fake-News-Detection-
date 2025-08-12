@@ -27,7 +27,7 @@ st.markdown(
     
     - **Confidence Scores :** Raw prediction probabilities (percentage).   
     
-    - **LIME Explanation :** Visualize top-10 important features for the predicted class by the model.
+    - **LIME Explanation :** Visualize top-10 important features for the model's predictions for a specific news article.
     
     """
 )
