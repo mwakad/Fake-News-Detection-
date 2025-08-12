@@ -3,7 +3,7 @@
 ## Project Summary
 This project applies advanced Natural Language Processing (NLP) and machine learning techniques to classify news articles as either **fake** (`Class 0`) or **real** (`Class 1`). It incorporates traditional ML (**_Logistic regression_**), ensemble learning (**_XGBoost_**), neural networks (**_LSTM_**), and transformer-based deep learning (**_RoBERTa-base_**) models. **Macro-averaged recall** is set as the success criteria because the training dataset is imbalanced and the project prioritizes to categorize fake news articles based on respective text.
 
-Built with **scikit-learn**, **XGBoost**, **TensorFlow/Keras**, **Torch**, **Hugging Face Transformers**, and **Streamlit**, the project includes a complete pipeline from data preprocessing to model deployment using FastAPI and Docker.
+Built with **scikit-learn**, **XGBoost**, **TensorFlow/Keras**, **Torch**, **Hugging Face Transformers**, **Streamlit**, **FastAPI**, and **Docker**.
 
 | Task                         | Model Used                   | Deployment File |
 |------------------------------|------------------------------|-----------------|
