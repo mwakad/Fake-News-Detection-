@@ -7,9 +7,9 @@ import json
 import matplotlib.pyplot as plt
 import os
 
-# Use an environment variable for flexibility
-# API_URL = os.getenv("API_URL", "http://127.0.0.1:8000") # Localhost
-API_URL = os.getenv("API_URL", "https://fri-professionals-cooler-track.trycloudflare.com") #cloudflared
+# Assign API backend URL
+# API_URL = os.getenv("API_URL", "http://127.0.0.1:8000") # localhost
+API_URL = os.getenv("API_URL", "https://a893a88267697b4039fb1dd6990e8d40.serveo.net") # Tunnel
 
 # Format Frontend app UI
 st.set_page_config(page_title="Transformers in Fake News Detector", layout="centered")
@@ -106,3 +106,6 @@ if "result" in st.session_state:
 
         else:
             st.info("No explanation available.")
+            
+            
+            
