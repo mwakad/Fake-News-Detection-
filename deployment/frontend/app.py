@@ -7,7 +7,7 @@ import os
 
 # set API_URL liknk
 # API_URL = os.getenv("API_URL", "http://127.0.0.1:8000")  # localhost
-API_URL = os.getenv("API_URL", "https://f4cd6746181f.ngrok-free.app") # ngrok tunnel
+API_URL = os.getenv("API_URL", "https://d5ac489fe720.ngrok-free.app") # ngrok tunnel
 
 # App configuration
 st.set_page_config(page_title="Transformers in Fake News Detector", layout="centered")
