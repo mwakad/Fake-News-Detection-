@@ -98,9 +98,9 @@ Its contextual language understanding from pretraining, combined with balanced f
 
 ## Installation & Running the App
 1. Clone the repository  
-`git clone https://github.com/yourusername/fake-news-detector.git`
+`git clone https://github.com/mwakad/fake-news-detector.git`
 2. Install dependencies
-`pip install -r requirements.txt`
+`pip install -r requirements.txt` (cd deployment/backend)
 3. Run FastAPI backend
 `uvicorn main:app --reload`
 4. Run Streamlit frontend
