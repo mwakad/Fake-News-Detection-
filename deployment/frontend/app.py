@@ -5,7 +5,16 @@ import requests
 import matplotlib.pyplot as plt
 import os
 
-# set API_URL liknk
+
+# Get query parameters for Brave browser extension
+params = st.query_params
+
+if "url" in params:
+    url_to_check = params["url"]
+    st.write(f" Analyzing article from: {url_to_check}")
+
+
+# set API_URL link
 # API_URL = os.getenv("API_URL", "http://127.0.0.1:8000")  # localhost
 API_URL = os.getenv("API_URL", "https://1cff0b4f9629.ngrok-free.app") # ngrok tunnel
 
@@ -112,4 +121,5 @@ if "result" in st.session_state:
             ax.axvline(x=0, color='gray', linestyle='--', linewidth=0.8)
             st.pyplot(fig)
         else:
+
             st.info("No explanation available.")
