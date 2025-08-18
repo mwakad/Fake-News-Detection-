@@ -1,26 +1,27 @@
 # Fake News Detection
 
 ## Project Summary
-This project applies advanced Natural Language Processing (NLP) and machine learning techniques to classify news articles as either **fake** (`Class 0`) or **real** (`Class 1`). It incorporates traditional ML (**_Logistic regression_**), ensemble learning (**_XGBoost_**), neural networks (**_LSTM_**), and transformer-based deep learning (**_RoBERTa-base_**) models. **Macro-averaged recall** is set as the success criteria because the training dataset is imbalanced and the project prioritizes to categorize fake news articles based on respective text.
+This project applies advanced Natural Language Processing (NLP) and machine learning techniques to classify news articles as either **fake** (`Class 0`) or **real** (`Class 1`). It incorporates traditional ML (**_Logistic regression_**), ensemble learning (**_XGBoost_**), neural networks (**_LSTM_**), and transformer-based deep learning (**_RoBERTa-base_**) models. **Recall (Fake)** is set as the success criteria because the project prioritizes to categorize fake news articles based on respective text.
 
 Built with **scikit-learn**, **XGBoost**, **TensorFlow/Keras**, **Torch**, **Hugging Face Transformers**, **Streamlit**, **FastAPI**, and **Docker**.
 
 | Task                         | Model Used                   | Deployment File |
 |------------------------------|------------------------------|-----------------|
-| Fake News Classification     | Finetuned RoBERTa (SMOTE)    | main.py         |
-| Interface                    | Streamlit + FastAPI          | streamlit_app.py|
+| Fake News Classification     | Finetuned RoBERTa (RUS)    | roberta_rus      |
+| Interface                    | FastAPI + Streamlit          | main.py and app.py|
 
 
 ## Data Understanding
-The dataset consists of **15,116 news articles** with labels indicating whether each article is *fake* (`Class 0`) or *real* (`Class 1`).  
+The dataset consists of **22,465** news articles with labels indicating whether each article is **fake** (`Class 0`) or **real** (`Class 1`).  
 
 Preprocessing steps included:
 - Tokenization and lemmatization using spaCy.
 - Stopword removal and punctuation stripping.
 - Domain extraction.
 
-The dataset is **imbalanced**, with a higher proportion of real articles compared to fake ones. This informed the choice of macro-averaged recall as the primary evaluation metric.
-<img width="2370" height="1765" alt="class-distribuctions" src="https://github.com/user-attachments/assets/4c0d0fef-a71e-4fba-9a0d-ef8731eee539" />
+The dataset is **imbalanced**, with a higher proportion of real articles (**_11,699_** compared to fake articles (**_10,766_**). 
+<img width="2370" height="1766" alt="class-distribuctions" src="https://github.com/user-attachments/assets/fa5ddef5-9825-48ff-bf38-c3e8650fbeac" />
+
 
 
 ## Problem Statement
@@ -30,51 +31,60 @@ Manual fact-checking is slow and infeasible at scale. The goal is to build an **
 ## Project Objectives
 ### **Objective 1:** Perform Extraploratory Data Analysis (EDA)
 
-**Top-5 Domains for Fake and Real News Articles**
-<img width="3590" height="1169" alt="top-5-domains-for-fake-and-real-news" src="https://github.com/user-attachments/assets/80ecdace-432b-4130-8837-f9b4e8fcf64b" />
+**Number of Sentences Distribuction**
+<img width="2370" height="1765" alt="num_sentences_distribution_class0_filtered" src="https://github.com/user-attachments/assets/926c8356-5bee-4711-9854-39be009b3608" />
 
-**Top-10 Bigrams for Fake and Real News Articles**
-<img width="4468" height="2365" alt="top-10-bigrams" src="https://github.com/user-attachments/assets/ae007b2f-0a1b-48af-9e14-ad2c229443d2" />
+<img width="2370" height="1765" alt="num_sentences_distribution_class1_filtered" src="https://github.com/user-attachments/assets/0c42bce7-cf14-4292-91c1-e747ab58c848" />
 
-**Top-10 Trigrams for Fake and Real News Articles**
-<img width="4468" height="2365" alt="top-10-trigrams" src="https://github.com/user-attachments/assets/53622ac7-236e-46ac-b6fb-f5623bd501a2" />
+**Text Length Distribuction**
+<img width="2370" height="1765" alt="text_length_distribution_class0_filtered" src="https://github.com/user-attachments/assets/e1c4efc4-e509-4ddc-a9b5-be4f6991a279" />
+
+<img width="2370" height="1765" alt="text_length_distribution_class1_filtered" src="https://github.com/user-attachments/assets/cea74697-c904-4aef-aa6c-8c3379879c3b" />
+
+
+**Top-10 Bigrams**
+<img width="4468" height="2365" alt="top-10-bigrams" src="https://github.com/user-attachments/assets/e08e1d1f-4e29-488f-8307-b52af07e44f6" />
+
+**Top-10 Trigrams**
+<img width="4468" height="2365" alt="top-10-trigrams" src="https://github.com/user-attachments/assets/cc100f04-1f62-4f05-8405-23b9d4d8dce7" />
 
 
 ### **Objective 2:** Build a baseline Logistic Regression model
 A baseline Logistic Regression model was built with imbalanced data and two balancing strategies:
 - **SMOTE** oversampling for the minority class
 - **Random Undersampling (RUS)** for the majority class
-  - **Best configuration:** SMOTE-balanced data with **macro-averaged recall = 0.7415**.
+  - **Best configuration:** RUS-balanced data: **Recall (Fake) = 0.8214**
 
 ### **Objective 3:** Build an **XGBoost** model, **LSTM** neural network, and Finetune the **RoBERTa-base Transformer**
 - An XGBoost classifier:  
-  - **Best configuration:** RUS-balanced data with **macro-averaged recall = 0.7427**.
+  - **Best configuration:** RUS-balanced data: **Recall (Fake) = 0.8427**
 - An LSTM neural network:
-  - **Best configuration:** SMOTE-balanced data with **macro-averaged recall = 0.7104**.
+  - **Best configuration:** Imbalanced data: **Recall (Fake) = 0.7130**
 - Finetune the RoBERTa-base transformer:  
-  - **Best configuration:** SMOTE-balanced data with **macro-averaged recall = 0.7660**
+  - **Best configuration:** RUS-balanced data: **Recall (Fake) = 0.8712**
 
 ### **Objective 4:** Interpret best performing model using the LIME library
 
-| MODEL                            | Macro-Average Recall | Recall (Fake) | Recall (Real) | Precision (Fake) | Precision (Real) | AUC | Accuracy |
-|----------------------------------|------------------|---------------|-------|-------|-------|-------|-------|
-| LR-SMOTE        | 0.7145           | 0.7029        | 0.7801 | 0.4812 | 0.9005 | 0.815 | 0.7627 | 
-| XGBoost-RUS                      | 0.7427           | 0.7088        | 0.7767 | 0.4794 | 0.9019 | 0.822 | 0.7614 | 
-| LSTM-SMOTE                       | 0.7104           | 0.5784        | 0.8424 | 0.5157 | 0.8732 | 0.792 | 0.7830 | 
-| RoBERTa-SMOTE          | **0.7660**       | **0.6686**    | **0.8634**  | **0.5869** | **0.8998** | **0.843** | **0.8196** | 
+| MODEL           | Recall (Fake) | Recall (Real) | Precision (Fake) | Precision (Real) | AUC | Accuracy |
+|-----------------|--------|--------|--------|--------|-------|-------|
+| LR-RUS          | 0.8214 | 0.9014 | 0.8846 | 0.8458 | 0.930 | 0.8631 | 
+| XGBoost-RUS     | 0.8427 | 0.9054 | 0.8913 | 0.8622 | 0.939 | 0.8754 | 
+| LSTM-Imbalanced | 0.7130 | 0.9425 | 0.9194 | 0.7811 | 0.867 | 0.8325 | 
+| RoBERTa-RUS     | **0.8712** | 0.8920 | 0.8813 | **0.8827** | 0.951 | 0.8820 | 
 
-- The Finetuned RoBERTa model using SMOTE-balanced dataset is the best performing alternative because it achieves the highest scores for Macro-averaged recall (0.7660).
-
-- This is corroborated by the confusion matrix, which reports the highest true positives for accurate fake news predictions (682).
-<img width="3570" height="1466" alt="roberta-confusion_matrices" src="https://github.com/user-attachments/assets/c547198d-e201-4a96-b88b-676a9a0b1398" />
+The Finetuned RoBERTa model using SMOTE-balanced dataset is the best performing alternative because: 
+- It achieves the highest **Recall (Fake)** (**_0.8712_**) **:** Highest **true positives for fake (`class 0`) predicitions (**_2814_**).
+- It achieves the highest **Precision (Real)** (**_0.8872_**) **:** Highest certainity (*88.27%*) for `class 1` predicitions when an article is actually **real**.
   
-- The ROC-AUC curve plots reinforces this decision since with the finetuned transformer with SMOTE-balanced data achieves the highest AUC (0.843). 
 
-<img width="2970" height="2066" alt="roberta-roc-auc" src="https://github.com/user-attachments/assets/efc7e878-2292-4a74-a56f-79cee8a3ff07" />
+- This is corroborated by the confusion matrix, which reports the highest true positives for accurate fake news predictions (**_2814_**).
+<img width="2970" height="2066" alt="roberta-roc-auc" src="https://github.com/user-attachments/assets/f7d68f78-1b17-4c07-bcd4-c9ab998fd466" />
+
 
   - **LIME** was used to explain the **_finetuned RoBERTa-base Transformer_** model's predictions at the feature level.
   - Visualizations highlight the top 10 features supporting the prediction (green = `predicted class`, red = `alternative prediction`).
-<img width="2969" height="1765" alt="lime_explanation_barplot" src="https://github.com/user-attachments/assets/663c9b2c-09da-4307-a1fc-3562c9bae87e" />
+<img width="2969" height="1765" alt="lime_explanation_barplot" src="https://github.com/user-attachments/assets/3fd97b6e-7222-4787-90f9-e839585ad398" />
+
 
 ### **Objective 5:** Deploy selected model using FastAPI and Streamlit
 The **Finetuned RoBERTa-base transformer with SMOTE-balanced dataset** is deployed using FastAPI, Streamlit, and Docker.
@@ -83,13 +93,13 @@ The **Finetuned RoBERTa-base transformer with SMOTE-balanced dataset** is deploy
   - **Docker :** Containerizes the **_Front-end_** and the **_Back-end_**.
 
 ## Conclusion
-The **Finetuned RoBERTa with SMOTE balancing** achieved the highest macro-averaged recall (0.7660) and demonstrated strong capability in detecting fake news articles.  
-Its contextual language understanding from pretraining, combined with balanced fine-tuning, improved recall on the minority class without sacrificing generalization.
+ - The **Finetuned RoBERTa with RUS balancing** achieved the highest **Recall (0.8712) and demonstrated strong capability in detecting fake news articles.
+ - Its contextual language understanding from pretraining and finetuning using RUS-balanced data improved recall on the minority class without sacrificing generalization.
 
 ## Recommendations
-- Incoporate more training data expecially class 0 (Fake News) entries to improve recall.
-- Leverage pretrained embeddings when finetuning the RoBERTa transformer to reduce training time.
-- Experiment finetuning other NLP transformers such as DistilBERT and DeBERTa.
+- **Collaborate with Media Outlets :** Work alongsode news dissemination orgarnizations and social media platforms to incorporate the finetuned RoBERTa model for real-time inference.
+- **Educate the Public :** Raise awareness about fake news detection tools, and encourage the public to leverage these technologies for more informed decision-making.
+- **Expand into Multiple Languages :** Train the model with multilingual datasets to optimize robustness in catching fake news articles written/ published across multiple languages/ dialects.  
 
 ## Next Steps
 - Deploy the containerized finetuned RoBERTa model via AWS SageMaker for low-latency inference.
