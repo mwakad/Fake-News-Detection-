@@ -78,7 +78,8 @@ The Finetuned RoBERTa model using SMOTE-balanced dataset is the best performing 
   
 
 - This is corroborated by the confusion matrix, which reports the highest true positives for accurate fake news predictions (**_2814_**).
-<img width="2970" height="2066" alt="roberta-roc-auc" src="https://github.com/user-attachments/assets/f7d68f78-1b17-4c07-bcd4-c9ab998fd466" />
+<img width="3570" height="1466" alt="roberta-confusion_matrices (1)" src="https://github.com/user-attachments/assets/2f04155b-9f18-44b1-bd61-1b357f48c63f" />
+
 
 
   - **LIME** was used to explain the **_finetuned RoBERTa-base Transformer_** model's predictions at the feature level.
