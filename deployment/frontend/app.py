@@ -7,7 +7,7 @@ import os
 
 # set API_URL liknk
 # API_URL = os.getenv("API_URL", "http://127.0.0.1:8000")  # localhost
-API_URL = os.getenv("API_URL", "https://df92241aa06b.ngrok-free.app") # ngrok tunnel
+API_URL = os.getenv("API_URL", "https://1cff0b4f9629.ngrok-free.app") # ngrok tunnel
 
 # App configuration
 st.set_page_config(page_title="Transformers in Fake News Detector", layout="centered")
@@ -112,5 +112,4 @@ if "result" in st.session_state:
             ax.axvline(x=0, color='gray', linestyle='--', linewidth=0.8)
             st.pyplot(fig)
         else:
-
             st.info("No explanation available.")
