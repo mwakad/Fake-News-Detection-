@@ -12,8 +12,8 @@ def predict_text(text: str):
     confidence = 0.85
     return label, confidence
 
-# --- Check query params ---
-params = st.experimental_get_query_params()
+# Check query params 
+params = st.query_params()
 
 if "api" in params:
     if "url" in params:
@@ -142,6 +142,7 @@ if "result" in st.session_state:
         else:
 
             st.info("No explanation available.")
+
 
 
 
