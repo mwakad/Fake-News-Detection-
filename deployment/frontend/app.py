@@ -5,34 +5,6 @@ import requests
 import matplotlib.pyplot as plt
 import os
 
-
-def predict_text(text: str):
-    # Dummy model (replace with real inference)
-    label = "Fake" if "Trump" in text else "Real"
-    confidence = 0.85
-    return label, confidence
-
-# Check query params 
-params = st.query_params()
-
-if "api" in params:
-    if "url" in params:
-        page_url = params["url"][0]  # NOTE: params values are lists
-        try:
-            page_text = requests.get(page_url, timeout=5).text[:2000]
-            label, conf = predict_text(page_text)
-            st.write(json.dumps({"label": label, "confidence": conf}))
-        except Exception as e:
-            st.write(json.dumps({"error": str(e)}))
-    elif "q" in params:
-        query_text = params["q"][0]
-        label, conf = predict_text(query_text)
-        st.write(json.dumps({"label": label, "confidence": conf}))
-    else:
-        st.write(json.dumps({"error": "Missing input"}))
-    st.stop()  # stop UI rendering
-
-
 # set API_URL link
 # API_URL = os.getenv("API_URL", "http://127.0.0.1:8000")  # localhost
 API_URL = os.getenv("API_URL", "https://70fd8881fc6a.ngrok-free.app") # ngrok tunnel
