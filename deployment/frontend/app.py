@@ -6,12 +6,33 @@ import matplotlib.pyplot as plt
 import os
 
 
-# Get query parameters for Brave browser extension
+# # Get query parameters for Brave browser extension
+# params = st.query_params
+
+# if "url" in params:
+#     url_to_check = params["url"]
+#     st.write(f" Analyzing article from: {url_to_check}")
+# --- API MODE ---
 params = st.query_params
 
-if "url" in params:
-    url_to_check = params["url"]
-    st.write(f" Analyzing article from: {url_to_check}")
+if "api" in params:
+    # Case 1: URL input
+    if "url" in params:
+        page_url = params["url"]
+        try:
+            page_text = requests.get(page_url, timeout=5).text[:2000]  # simple fetch
+            label, conf = predict_text(page_text)
+            st.json({"label": label, "confidence": conf})
+        except Exception as e:
+            st.json({"error": str(e)})
+    # Case 2: Raw text input
+    elif "q" in params:
+        label, conf = predict_text(params["q"])
+        st.json({"label": label, "confidence": conf})
+    else:
+        st.json({"error": "Missing input (use ?api=1&url=... or ?api=1&q=...)"})
+
+    st.stop()  # prevent rest of UI from rendering
 
 
 # set API_URL link
@@ -123,4 +144,5 @@ if "result" in st.session_state:
         else:
 
             st.info("No explanation available.")
+
 
