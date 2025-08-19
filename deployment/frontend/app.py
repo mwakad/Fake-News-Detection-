@@ -6,33 +6,31 @@ import matplotlib.pyplot as plt
 import os
 
 
-# # Get query parameters for Brave browser extension
-# params = st.query_params
+def predict_text(text: str):
+    # Dummy model (replace with real inference)
+    label = "Fake" if "Trump" in text else "Real"
+    confidence = 0.85
+    return label, confidence
 
-# if "url" in params:
-#     url_to_check = params["url"]
-#     st.write(f" Analyzing article from: {url_to_check}")
-# --- API MODE ---
-params = st.query_params
+# --- Check query params ---
+params = st.experimental_get_query_params()
 
 if "api" in params:
-    # Case 1: URL input
     if "url" in params:
-        page_url = params["url"]
+        page_url = params["url"][0]  # NOTE: params values are lists
         try:
-            page_text = requests.get(page_url, timeout=5).text[:2000]  # simple fetch
+            page_text = requests.get(page_url, timeout=5).text[:2000]
             label, conf = predict_text(page_text)
-            st.json({"label": label, "confidence": conf})
+            st.write(json.dumps({"label": label, "confidence": conf}))
         except Exception as e:
-            st.json({"error": str(e)})
-    # Case 2: Raw text input
+            st.write(json.dumps({"error": str(e)}))
     elif "q" in params:
-        label, conf = predict_text(params["q"])
-        st.json({"label": label, "confidence": conf})
+        query_text = params["q"][0]
+        label, conf = predict_text(query_text)
+        st.write(json.dumps({"label": label, "confidence": conf}))
     else:
-        st.json({"error": "Missing input (use ?api=1&url=... or ?api=1&q=...)"})
-
-    st.stop()  # prevent rest of UI from rendering
+        st.write(json.dumps({"error": "Missing input"}))
+    st.stop()  # stop UI rendering
 
 
 # set API_URL link
@@ -144,5 +142,6 @@ if "result" in st.session_state:
         else:
 
             st.info("No explanation available.")
+
 
 
